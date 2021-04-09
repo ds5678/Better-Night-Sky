@@ -2,3 +2,6 @@ bin
 obj
 Better-Night-Sky.csproj.user
 .vs
+Library
+Logs
+Temp

@@ -8,6 +8,8 @@ namespace BetterNightSky
         private float lastAlpha = -1;
         private Material material;
 
+        public UpdateStars(System.IntPtr intPtr) : base(intPtr) { }
+
         public void Start()
         {
             material = GetComponent<Renderer>().material;

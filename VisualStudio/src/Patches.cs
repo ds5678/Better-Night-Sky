@@ -9,7 +9,8 @@ namespace BetterNightSky
         {
             if (nightStates > 0)
             {
-                __instance.m_SkyBloomIntensity *= 0.3f;
+                //__instance.m_SkyBloomIntensity *= 0.3f;
+                __instance.m_BloomIntensity *= 0.3f;
             }
         }
     }
@@ -19,6 +20,7 @@ namespace BetterNightSky
     {
         public static void Prefix()
         {
+            Implementation.Log("Init");
             Implementation.Install();
         }
     }
@@ -28,6 +30,7 @@ namespace BetterNightSky
     {
         public static void Postfix()
         {
+            Implementation.Log("SetMoonPhaseIndex");
             Implementation.UpdateMoonPhase();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnhollowerBaseLib.Attributes;
 
 namespace BetterNightSky
 {
@@ -14,9 +15,12 @@ namespace BetterNightSky
         private int lastPhaseTextureIndex = -1;
         private Material material;
 
+        public UpdateMoon(System.IntPtr intPtr) : base(intPtr) { }
+
+        [HideFromIl2Cpp]
         public void SetForcedPhase(int forcedPhase)
         {
-            this.forcedPhase = forcedPhase;
+            this.forcedPhase = Mathf.Clamp(forcedPhase,0,MoonPhaseTextures.Length);
             UpdatePhase();
         }
 
@@ -35,27 +39,20 @@ namespace BetterNightSky
 
         public void UpdatePhase()
         {
-            if (MoonPhaseTextures == null || material == null)
-            {
-                return;
-            }
+            if (MoonPhaseTextures == null || material == null) return;
 
             int phaseTextureIndex = GetPhaseTextureIndex();
-            if (lastPhaseTextureIndex == phaseTextureIndex)
-            {
-                return;
-            }
+            if (lastPhaseTextureIndex == phaseTextureIndex) return;
 
             lastPhaseTextureIndex = phaseTextureIndex;
-            material.mainTexture = MoonPhaseTextures[lastPhaseTextureIndex];
+            //material.mainTexture = MoonPhaseTextures[lastPhaseTextureIndex];
+            material.mainTexture = Implementation.GetMoonPhaseTexture(lastPhaseTextureIndex);
         }
 
+        [HideFromIl2Cpp]
         private int GetPhaseTextureIndex()
         {
-            if (forcedPhase >= 0)
-            {
-                return forcedPhase;
-            }
+            if (forcedPhase >= 0) return forcedPhase;
 
             UniStormWeatherSystem uniStormWeatherSystem = GameManager.GetUniStorm();
             int day = uniStormWeatherSystem.GetDayNumber() + uniStormWeatherSystem.m_MoonCycleStartDay;
@@ -65,10 +62,7 @@ namespace BetterNightSky
         private void UpdateAlpha()
         {
             float currentAlpha = GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha;
-            if (Mathf.Approximately(lastAlpha, currentAlpha))
-            {
-                return;
-            }
+            if (Mathf.Approximately(lastAlpha, currentAlpha)) return;
 
             lastAlpha = currentAlpha;
             material.SetColor("_TintColor", baseColor * lastAlpha);

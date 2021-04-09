@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnhollowerBaseLib.Attributes;
 
 namespace BetterNightSky
 {
@@ -22,6 +23,9 @@ namespace BetterNightSky
 
         private ParticleSystem particleSystem;
 
+        public UpdateShootingStar(System.IntPtr intPtr) : base(intPtr) { }
+
+        [HideFromIl2Cpp]
         internal void Trigger(int duration = 0)
         {
             this.CancelInvoke();
@@ -54,6 +58,7 @@ namespace BetterNightSky
             return "MainMenu" == GameManager.m_ActiveScene;
         }
 
+        [HideFromIl2Cpp]
         private bool CanEmit()
         {
             if (GameManager.GetWeatherComponent().IsIndoorScene())
@@ -128,7 +133,7 @@ namespace BetterNightSky
             Color minColor = new Color(Random.Range(COLOR_MIN, COLOR_MAX), Random.Range(COLOR_MIN, COLOR_MAX), Random.Range(COLOR_MIN, COLOR_MAX), currentAlpha);
             Color maxColor = new Color(COLOR_MAX, COLOR_MAX, COLOR_MAX, currentAlpha);
             ParticleSystem.MainModule mainModule = this.particleSystem.main;
-            mainModule.startColor = new ParticleSystem.MinMaxGradient(minColor, maxColor);
+            mainModule.startColor = new ParticleSystem.MinMaxGradient() { m_ColorMin = minColor, m_ColorMax = maxColor };
 
             mainModule.maxParticles = Random.Range(PARTICLES_MIN, PARTICLES_MAX);
         }
