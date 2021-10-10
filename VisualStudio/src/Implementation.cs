@@ -95,14 +95,14 @@ namespace BetterNightSky
             if (Settings.options.Sky && starSphere == null)
             {
                 starSphere = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/StarSphere.prefab"));
-                if (starSphere == null) MelonLoader.MelonLogger.LogError("starSphere was instantiated null");
+                if (starSphere == null) MelonLoader.MelonLogger.Error("starSphere was instantiated null");
                 starSphere.transform.parent = GameManager.GetUniStorm()?.m_StarSphere?.transform?.parent;
                 starSphere.transform.localEulerAngles = new Vector3(0,90,0);
                 starSphere.layer = GameManager.GetUniStorm().m_StarSphere.layer;
                 starSphere?.AddComponent<UpdateStars>();
 
                 moon = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/Moon.prefab"));
-                if (moon == null) MelonLoader.MelonLogger.LogError("moon was instantiated null");
+                if (moon == null) MelonLoader.MelonLogger.Error("moon was instantiated null");
                 moon.transform.parent = GameManager.GetUniStorm()?.m_StarSphere?.transform?.parent?.parent;
                 moon.layer = GameManager.GetUniStorm().m_StarSphere.layer;
                 updateMoon = moon?.AddComponent<UpdateMoon>();
@@ -141,8 +141,8 @@ namespace BetterNightSky
             updateShootingStar.Reschedule();
         }
 
-        internal static void Log(string message) => MelonLoader.MelonLogger.Log( message);
-        internal static void Log(string message, params object[] parameters) => MelonLoader.MelonLogger.Log(message, parameters);
+        internal static void Log(string message) => MelonLoader.MelonLogger.Msg( message);
+        internal static void Log(string message, params object[] parameters) => MelonLoader.MelonLogger.Msg(message, parameters);
 
         internal static void UpdateMoonPhase()
         {

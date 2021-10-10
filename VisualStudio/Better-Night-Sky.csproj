@@ -60,32 +60,35 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\Managed\Il2CppSystem.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MelonLoader.ModHandler">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TheLongDark\MelonLoader\MelonLoader.ModHandler.dll</HintPath>
+    <Reference Include="MelonLoader, Version=0.4.3.0, Culture=neutral, processorArchitecture=MSIL">
       <Private>False</Private>
     </Reference>
     <Reference Include="ModSettings, Version=1.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnhollowerBaseLib, Version=0.4.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnhollowerRuntimeLib, Version=0.4.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.JSONSerializeModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
