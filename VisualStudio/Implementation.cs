@@ -12,24 +12,21 @@ internal class Implementation : MelonLoader.MelonMod
 
     private static AssetBundle assetBundle;
 
-    //private static BetterNightSkySettings settings;
-
-    private static GameObject moon;
+    private static GameObject? moon;
     private static UpdateMoon updateMoon;
 
-    private static GameObject starSphere;
+    private static GameObject? starSphere;
 
-    private static GameObject shootingStar;
+    private static GameObject? shootingStar;
     private static UpdateShootingStar updateShootingStar;
 
-    public static int ShootingStarsFrequency {
+    public static int ShootingStarsFrequency
+    {
         get => Settings.options.ShootingStarsFrequency;
     }
 
     public override void OnApplicationStart()
     {
-        Debug.Log($"[{Info.Name}] Version {Info.Version} loaded!");
-
         Settings.OnLoad();
 
         Initialize();
@@ -47,8 +44,6 @@ internal class Implementation : MelonLoader.MelonMod
     private static void LoadEmbeddedAssetBundle()
     {
         MemoryStream memoryStream;
-        //Log(typeof(UpdateShootingStar).Assembly.GetManifestResourceNames().Length.ToString());
-        //Log(Assembly.GetExecutingAssembly().GetManifestResourceNames().Length.ToString());
         using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BetterNightSky.res.better-night-sky"))
         {
             memoryStream = new MemoryStream((int)stream.Length);
@@ -63,12 +58,10 @@ internal class Implementation : MelonLoader.MelonMod
 
     internal static void ForcePhase(int phase)
     {
-        if (updateMoon == null)
+        if (updateMoon != null)
         {
-            return;
+            updateMoon.SetForcedPhase(phase);
         }
-
-        updateMoon.SetForcedPhase(phase);
     }
 
     internal static void Install()
@@ -76,14 +69,22 @@ internal class Implementation : MelonLoader.MelonMod
         if (Settings.options.Sky && starSphere == null)
         {
             starSphere = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/StarSphere.prefab"));
-            if (starSphere == null) MelonLoader.MelonLogger.Error("starSphere was instantiated null");
+            if (starSphere == null)
+            {
+                MelonLoader.MelonLogger.Error("starSphere was instantiated null");
+            }
+
             starSphere.transform.parent = GameManager.GetUniStorm()?.m_StarSphere?.transform?.parent;
-            starSphere.transform.localEulerAngles = new Vector3(0,90,0);
+            starSphere.transform.localEulerAngles = new Vector3(0, 90, 0);
             starSphere.layer = GameManager.GetUniStorm().m_StarSphere.layer;
             starSphere?.AddComponent<UpdateStars>();
 
             moon = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/Moon.prefab"));
-            if (moon == null) MelonLoader.MelonLogger.Error("moon was instantiated null");
+            if (moon == null)
+            {
+                MelonLoader.MelonLogger.Error("moon was instantiated null");
+            }
+
             moon.transform.parent = GameManager.GetUniStorm()?.m_StarSphere?.transform?.parent?.parent;
             moon.layer = GameManager.GetUniStorm().m_StarSphere.layer;
             updateMoon = moon?.AddComponent<UpdateMoon>();
@@ -114,21 +115,20 @@ internal class Implementation : MelonLoader.MelonMod
 
     internal static void RescheduleShootingStars()
     {
-        if (shootingStar == null)
+        if (shootingStar != null)
         {
-            return;
+            updateShootingStar.Reschedule();
         }
-
-        updateShootingStar.Reschedule();
     }
 
-    internal static void Log(string message) => MelonLoader.MelonLogger.Msg( message);
-    internal static void Log(string message, params object[] parameters) => MelonLoader.MelonLogger.Msg(message, parameters);
+    internal static void Log(string message) => MelonLoader.MelonLogger.Msg(message);
 
     internal static void UpdateMoonPhase()
     {
-        if (updateMoon == null) return;
-        updateMoon.UpdatePhase();
+        if (updateMoon != null)
+        {
+            updateMoon.UpdatePhase();
+        }
     }
 
     internal static Texture2D GetMoonPhaseTexture(int i)
@@ -152,7 +152,7 @@ internal class Implementation : MelonLoader.MelonMod
         int numParameter = uConsole.GetNumParameters();
         if (numParameter != 1)
         {
-            Debug.LogError("Expected one parameter: Moon Phase Index");
+            uConsole.Log("Expected one parameter: Moon Phase Index");
             return;
         }
 
@@ -163,7 +163,7 @@ internal class Implementation : MelonLoader.MelonMod
     {
         if (shootingStar == null)
         {
-            Log("Shooting Stars are disabled");
+            uConsole.Log("Shooting Stars are disabled");
             return;
         }
 

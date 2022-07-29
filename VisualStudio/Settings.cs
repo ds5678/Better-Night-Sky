@@ -19,6 +19,6 @@ internal static class Settings
     public static void OnLoad()
     {
         options = new BetterNightSkySettings();
-        options.AddToModSettings("Better Night Sky",MenuType.MainMenuOnly);
+        options.AddToModSettings("Better Night Sky", MenuType.MainMenuOnly);
     }
 }

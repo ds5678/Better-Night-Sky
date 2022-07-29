@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace BetterNightSky;
 
-	[MelonLoader.RegisterTypeInIl2Cpp]
-	internal class UpdateMoon : MonoBehaviour
+[MelonLoader.RegisterTypeInIl2Cpp]
+internal class UpdateMoon : MonoBehaviour
 {
     public const int MOON_CYCLE_DAYS = 29;
 
@@ -23,7 +23,7 @@ namespace BetterNightSky;
     [HideFromIl2Cpp]
     public void SetForcedPhase(int forcedPhase)
     {
-        this.forcedPhase = Mathf.Clamp(forcedPhase,0,MoonPhaseTextures.Length);
+        this.forcedPhase = Mathf.Clamp(forcedPhase, 0, MoonPhaseTextures.Length);
         UpdatePhase();
     }
 
@@ -42,10 +42,16 @@ namespace BetterNightSky;
 
     public void UpdatePhase()
     {
-        if (MoonPhaseTextures == null || material == null) return;
+        if (MoonPhaseTextures == null || material == null)
+        {
+            return;
+        }
 
         int phaseTextureIndex = GetPhaseTextureIndex();
-        if (lastPhaseTextureIndex == phaseTextureIndex) return;
+        if (lastPhaseTextureIndex == phaseTextureIndex)
+        {
+            return;
+        }
 
         lastPhaseTextureIndex = phaseTextureIndex;
         //material.mainTexture = MoonPhaseTextures[lastPhaseTextureIndex];
@@ -55,7 +61,10 @@ namespace BetterNightSky;
     [HideFromIl2Cpp]
     private int GetPhaseTextureIndex()
     {
-        if (forcedPhase >= 0) return forcedPhase;
+        if (forcedPhase >= 0)
+        {
+            return forcedPhase;
+        }
 
         UniStormWeatherSystem uniStormWeatherSystem = GameManager.GetUniStorm();
         int day = uniStormWeatherSystem.GetDayNumber() + uniStormWeatherSystem.m_MoonCycleStartDay;
@@ -65,7 +74,10 @@ namespace BetterNightSky;
     private void UpdateAlpha()
     {
         float currentAlpha = GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha;
-        if (Mathf.Approximately(lastAlpha, currentAlpha)) return;
+        if (Mathf.Approximately(lastAlpha, currentAlpha))
+        {
+            return;
+        }
 
         lastAlpha = currentAlpha;
         material.SetColor("_TintColor", baseColor * lastAlpha);
