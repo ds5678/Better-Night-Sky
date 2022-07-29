@@ -4,8 +4,8 @@ using Hinterland;
 
 namespace BetterNightSky;
 
-[HarmonyPatch(typeof(TODStateConfig), "SetBlended")]
-internal class TODStateConfic_SetBlended
+[HarmonyPatch(typeof(TODStateConfig), nameof(TODStateConfig.SetBlended))]
+internal static class TODStateConfic_SetBlended
 {
     public static void Postfix(TODStateConfig __instance, int nightStates)
     {
@@ -17,8 +17,8 @@ internal class TODStateConfic_SetBlended
     }
 }
 
-[HarmonyPatch(typeof(UniStormWeatherSystem), "Init")]
-internal class UniStormWeatherSystem_Init
+[HarmonyPatch(typeof(UniStormWeatherSystem), nameof(UniStormWeatherSystem.Init))]
+internal static class UniStormWeatherSystem_Init
 {
     public static void Prefix()
     {
@@ -27,8 +27,8 @@ internal class UniStormWeatherSystem_Init
     }
 }
 
-[HarmonyPatch(typeof(UniStormWeatherSystem), "SetMoonPhaseIndex")]
-internal class UniStormWeatherSystem_SetMoonPhaseIndex
+[HarmonyPatch(typeof(UniStormWeatherSystem), nameof(UniStormWeatherSystem.SetMoonPhaseIndex))]
+internal static class UniStormWeatherSystem_SetMoonPhaseIndex
 {
     public static void Postfix()
     {
@@ -37,8 +37,8 @@ internal class UniStormWeatherSystem_SetMoonPhaseIndex
     }
 }
 
-[HarmonyPatch(typeof(UniStormWeatherSystem), "SetMoonPhase")]
-internal class UniStormWeatherSystem_SetMoonPhase
+[HarmonyPatch(typeof(UniStormWeatherSystem), nameof(UniStormWeatherSystem.SetMoonPhase))]
+internal static class UniStormWeatherSystem_SetMoonPhase
 {
     public static void Postfix()
     {
@@ -46,8 +46,8 @@ internal class UniStormWeatherSystem_SetMoonPhase
     }
 }
 
-[HarmonyPatch(typeof(GameManager), "Awake")]
-internal class GameManager_Awake
+[HarmonyPatch(typeof(GameManager), nameof(GameManager.Awake))]
+internal static class GameManager_Awake
 {
     private static bool wasMainMenu = false;
 

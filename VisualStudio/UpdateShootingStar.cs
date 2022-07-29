@@ -6,7 +6,7 @@ using UnityEngine;
 namespace BetterNightSky;
 
 [MelonLoader.RegisterTypeInIl2Cpp]
-public class UpdateShootingStar : MonoBehaviour
+internal sealed class UpdateShootingStar : MonoBehaviour
 {
     private const float ALPHA_MAX = 0.75f;
     private const float COLOR_MAX = 0.90f;
@@ -64,17 +64,7 @@ public class UpdateShootingStar : MonoBehaviour
     [HideFromIl2Cpp]
     private bool CanEmit()
     {
-        if (GameManager.GetWeatherComponent().IsIndoorScene())
-        {
-            return false;
-        }
-
-        if (GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha < 0.05)
-        {
-            return false;
-        }
-
-        return true;
+        return !GameManager.GetWeatherComponent().IsIndoorScene() && GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha >= 0.05;
     }
 
     private void Start()

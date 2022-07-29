@@ -5,7 +5,7 @@ using UnityEngine;
 namespace BetterNightSky;
 
 [MelonLoader.RegisterTypeInIl2Cpp]
-public class UpdateStars : MonoBehaviour
+internal sealed class UpdateStars : MonoBehaviour
 {
     private Color baseColor;
     private float lastAlpha = -1;

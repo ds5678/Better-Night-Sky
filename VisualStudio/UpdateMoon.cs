@@ -6,7 +6,7 @@ using UnityEngine;
 namespace BetterNightSky;
 
 [MelonLoader.RegisterTypeInIl2Cpp]
-internal class UpdateMoon : MonoBehaviour
+internal sealed class UpdateMoon : MonoBehaviour
 {
     public const int MOON_CYCLE_DAYS = 29;
 

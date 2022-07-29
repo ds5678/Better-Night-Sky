@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace BetterNightSky;
 
-internal class Implementation : MelonLoader.MelonMod
+internal sealed class Implementation : MelonLoader.MelonMod
 {
     private const string NAME = "Better-Night-Sky";
 

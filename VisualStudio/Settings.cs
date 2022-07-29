@@ -2,7 +2,7 @@
 
 namespace BetterNightSky;
 
-internal class BetterNightSkySettings : JsonModSettings
+internal sealed class BetterNightSkySettings : JsonModSettings
 {
     [Name("Shooting Stars Frequency")]
     [Description("How often shootings stars will appear in the sky.")]
