@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿extern alias Hinterland;
+using Hinterland;
+using System.IO;
 using System.Reflection;
 using UnityEngine;
 

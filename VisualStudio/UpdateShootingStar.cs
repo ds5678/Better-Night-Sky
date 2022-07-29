@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿extern alias Hinterland;
+using Hinterland;
 using UnhollowerBaseLib.Attributes;
+using UnityEngine;
 
 namespace BetterNightSky
 {
