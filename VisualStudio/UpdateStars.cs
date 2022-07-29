@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace BetterNightSky
 {
+    [MelonLoader.RegisterTypeInIl2Cpp]
     public class UpdateStars : MonoBehaviour
     {
         private Color baseColor;

@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace BetterNightSky
 {
-    public class UpdateShootingStar : MonoBehaviour
+	[MelonLoader.RegisterTypeInIl2Cpp]
+	public class UpdateShootingStar : MonoBehaviour
     {
         private const float ALPHA_MAX = 0.75f;
         private const float COLOR_MAX = 0.90f;

@@ -32,16 +32,7 @@ namespace BetterNightSky
 
             Settings.OnLoad();
 
-            InjectClasses();
-
             Initialize();
-        }
-
-        public static void InjectClasses()
-        {
-            UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<UpdateStars>();
-            UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<UpdateMoon>();
-            UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<UpdateShootingStar>();
         }
 
         private static void Initialize()
@@ -51,18 +42,6 @@ namespace BetterNightSky
             uConsole.RegisterCommand("toggle-night-sky", new System.Action(ToggleNightSky));
             uConsole.RegisterCommand("moon-phase", new System.Action(MoonPhase));
             uConsole.RegisterCommand("shooting-star", new System.Action(ShootingStar));
-        }
-
-        private static void LoadAssetBundleFromFile()
-        {
-            string modDirectory = Path.GetFullPath(typeof(MelonLoader.MelonMod).Assembly.Location + @"\..\..\Mods");
-            string assetBundlePath = Path.Combine(modDirectory, "Better-Night-Sky.unity3d");
-
-            assetBundle = AssetBundle.LoadFromFile(assetBundlePath);
-            if (assetBundle == null)
-            {
-                throw new FileNotFoundException("Could not load asset bundle from path '" + assetBundlePath + "'.");
-            }
         }
 
         private static void LoadEmbeddedAssetBundle()
