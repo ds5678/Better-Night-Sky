@@ -4,185 +4,184 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 
-namespace BetterNightSky
+namespace BetterNightSky;
+
+internal class Implementation : MelonLoader.MelonMod
 {
-    internal class Implementation : MelonLoader.MelonMod
+    private const string NAME = "Better-Night-Sky";
+
+    private static AssetBundle assetBundle;
+
+    //private static BetterNightSkySettings settings;
+
+    private static GameObject moon;
+    private static UpdateMoon updateMoon;
+
+    private static GameObject starSphere;
+
+    private static GameObject shootingStar;
+    private static UpdateShootingStar updateShootingStar;
+
+    public static int ShootingStarsFrequency {
+        get => Settings.options.ShootingStarsFrequency;
+    }
+
+    public override void OnApplicationStart()
     {
-        private const string NAME = "Better-Night-Sky";
+        Debug.Log($"[{Info.Name}] Version {Info.Version} loaded!");
 
-        private static AssetBundle assetBundle;
+        Settings.OnLoad();
 
-        //private static BetterNightSkySettings settings;
+        Initialize();
+    }
 
-        private static GameObject moon;
-        private static UpdateMoon updateMoon;
+    private static void Initialize()
+    {
+        LoadEmbeddedAssetBundle();
 
-        private static GameObject starSphere;
+        uConsole.RegisterCommand("toggle-night-sky", new System.Action(ToggleNightSky));
+        uConsole.RegisterCommand("moon-phase", new System.Action(MoonPhase));
+        uConsole.RegisterCommand("shooting-star", new System.Action(ShootingStar));
+    }
 
-        private static GameObject shootingStar;
-        private static UpdateShootingStar updateShootingStar;
-
-        public static int ShootingStarsFrequency {
-            get => Settings.options.ShootingStarsFrequency;
-        }
-
-        public override void OnApplicationStart()
+    private static void LoadEmbeddedAssetBundle()
+    {
+        MemoryStream memoryStream;
+        //Log(typeof(UpdateShootingStar).Assembly.GetManifestResourceNames().Length.ToString());
+        //Log(Assembly.GetExecutingAssembly().GetManifestResourceNames().Length.ToString());
+        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BetterNightSky.res.better-night-sky"))
         {
-            Debug.Log($"[{Info.Name}] Version {Info.Version} loaded!");
-
-            Settings.OnLoad();
-
-            Initialize();
+            memoryStream = new MemoryStream((int)stream.Length);
+            stream.CopyTo(memoryStream);
         }
-
-        private static void Initialize()
+        if (memoryStream.Length == 0)
         {
-            LoadEmbeddedAssetBundle();
-
-            uConsole.RegisterCommand("toggle-night-sky", new System.Action(ToggleNightSky));
-            uConsole.RegisterCommand("moon-phase", new System.Action(MoonPhase));
-            uConsole.RegisterCommand("shooting-star", new System.Action(ShootingStar));
+            throw new System.Exception("No data loaded!");
         }
+        assetBundle = AssetBundle.LoadFromMemory(memoryStream.ToArray());
+    }
 
-        private static void LoadEmbeddedAssetBundle()
+    internal static void ForcePhase(int phase)
+    {
+        if (updateMoon == null)
         {
-            MemoryStream memoryStream;
-            //Log(typeof(UpdateShootingStar).Assembly.GetManifestResourceNames().Length.ToString());
-            //Log(Assembly.GetExecutingAssembly().GetManifestResourceNames().Length.ToString());
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BetterNightSky.res.better-night-sky"))
-            {
-                memoryStream = new MemoryStream((int)stream.Length);
-                stream.CopyTo(memoryStream);
-            }
-            if (memoryStream.Length == 0)
-            {
-                throw new System.Exception("No data loaded!");
-            }
-            assetBundle = AssetBundle.LoadFromMemory(memoryStream.ToArray());
+            return;
         }
 
-        internal static void ForcePhase(int phase)
+        updateMoon.SetForcedPhase(phase);
+    }
+
+    internal static void Install()
+    {
+        if (Settings.options.Sky && starSphere == null)
         {
-            if (updateMoon == null)
-            {
-                return;
-            }
+            starSphere = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/StarSphere.prefab"));
+            if (starSphere == null) MelonLoader.MelonLogger.Error("starSphere was instantiated null");
+            starSphere.transform.parent = GameManager.GetUniStorm()?.m_StarSphere?.transform?.parent;
+            starSphere.transform.localEulerAngles = new Vector3(0,90,0);
+            starSphere.layer = GameManager.GetUniStorm().m_StarSphere.layer;
+            starSphere?.AddComponent<UpdateStars>();
 
-            updateMoon.SetForcedPhase(phase);
+            moon = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/Moon.prefab"));
+            if (moon == null) MelonLoader.MelonLogger.Error("moon was instantiated null");
+            moon.transform.parent = GameManager.GetUniStorm()?.m_StarSphere?.transform?.parent?.parent;
+            moon.layer = GameManager.GetUniStorm().m_StarSphere.layer;
+            updateMoon = moon?.AddComponent<UpdateMoon>();
+            updateMoon.MoonPhaseTextures = GetMoonPhaseTextures();
+
+            GameManager.GetUniStorm()?.m_StarSphere?.SetActive(false);
         }
 
-        internal static void Install()
+        if (!Settings.options.Sky && starSphere != null)
         {
-            if (Settings.options.Sky && starSphere == null)
-            {
-                starSphere = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/StarSphere.prefab"));
-                if (starSphere == null) MelonLoader.MelonLogger.Error("starSphere was instantiated null");
-                starSphere.transform.parent = GameManager.GetUniStorm()?.m_StarSphere?.transform?.parent;
-                starSphere.transform.localEulerAngles = new Vector3(0,90,0);
-                starSphere.layer = GameManager.GetUniStorm().m_StarSphere.layer;
-                starSphere?.AddComponent<UpdateStars>();
-
-                moon = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/Moon.prefab"));
-                if (moon == null) MelonLoader.MelonLogger.Error("moon was instantiated null");
-                moon.transform.parent = GameManager.GetUniStorm()?.m_StarSphere?.transform?.parent?.parent;
-                moon.layer = GameManager.GetUniStorm().m_StarSphere.layer;
-                updateMoon = moon?.AddComponent<UpdateMoon>();
-                updateMoon.MoonPhaseTextures = GetMoonPhaseTextures();
-
-                GameManager.GetUniStorm()?.m_StarSphere?.SetActive(false);
-            }
-
-            if (!Settings.options.Sky && starSphere != null)
-            {
-                Object.Destroy(starSphere);
-                Object.Destroy(moon);
-                GameManager.GetUniStorm().m_StarSphere.SetActive(true);
-            }
-
-            if (Settings.options.ShootingStarsFrequency > 0 && shootingStar == null)
-            {
-                shootingStar = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/ShootingStar.prefab"));
-                shootingStar.transform.parent = GameManager.GetUniStorm().m_StarSphere.transform.parent.parent;
-                updateShootingStar = shootingStar.AddComponent<UpdateShootingStar>();
-            }
-
-            if (Settings.options.ShootingStarsFrequency == 0 && shootingStar != null)
-            {
-                Object.Destroy(shootingStar);
-            }
+            Object.Destroy(starSphere);
+            Object.Destroy(moon);
+            GameManager.GetUniStorm().m_StarSphere.SetActive(true);
         }
 
-        internal static void RescheduleShootingStars()
+        if (Settings.options.ShootingStarsFrequency > 0 && shootingStar == null)
         {
-            if (shootingStar == null)
-            {
-                return;
-            }
-
-            updateShootingStar.Reschedule();
+            shootingStar = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/ShootingStar.prefab"));
+            shootingStar.transform.parent = GameManager.GetUniStorm().m_StarSphere.transform.parent.parent;
+            updateShootingStar = shootingStar.AddComponent<UpdateShootingStar>();
         }
 
-        internal static void Log(string message) => MelonLoader.MelonLogger.Msg( message);
-        internal static void Log(string message, params object[] parameters) => MelonLoader.MelonLogger.Msg(message, parameters);
-
-        internal static void UpdateMoonPhase()
+        if (Settings.options.ShootingStarsFrequency == 0 && shootingStar != null)
         {
-            if (updateMoon == null) return;
-            updateMoon.UpdatePhase();
+            Object.Destroy(shootingStar);
         }
+    }
 
-        internal static Texture2D GetMoonPhaseTexture(int i)
+    internal static void RescheduleShootingStars()
+    {
+        if (shootingStar == null)
         {
-            return assetBundle.LoadAsset<Texture2D>("assets/MoonPhase/Moon_" + i + ".png");
+            return;
         }
 
-        private static Texture2D[] GetMoonPhaseTextures()
+        updateShootingStar.Reschedule();
+    }
+
+    internal static void Log(string message) => MelonLoader.MelonLogger.Msg( message);
+    internal static void Log(string message, params object[] parameters) => MelonLoader.MelonLogger.Msg(message, parameters);
+
+    internal static void UpdateMoonPhase()
+    {
+        if (updateMoon == null) return;
+        updateMoon.UpdatePhase();
+    }
+
+    internal static Texture2D GetMoonPhaseTexture(int i)
+    {
+        return assetBundle.LoadAsset<Texture2D>("assets/MoonPhase/Moon_" + i + ".png");
+    }
+
+    private static Texture2D[] GetMoonPhaseTextures()
+    {
+        Texture2D[] result = new Texture2D[24];
+        for (int i = 0; i < result.Length; i++)
         {
-            Texture2D[] result = new Texture2D[24];
-            for (int i = 0; i < result.Length; i++)
-            {
-                result[i] = GetMoonPhaseTexture(i);
-            }
-
-            return result;
+            result[i] = GetMoonPhaseTexture(i);
         }
 
-        private static void MoonPhase()
+        return result;
+    }
+
+    private static void MoonPhase()
+    {
+        int numParameter = uConsole.GetNumParameters();
+        if (numParameter != 1)
         {
-            int numParameter = uConsole.GetNumParameters();
-            if (numParameter != 1)
-            {
-                Debug.LogError("Expected one parameter: Moon Phase Index");
-                return;
-            }
-
-            ForcePhase(uConsole.GetInt());
+            Debug.LogError("Expected one parameter: Moon Phase Index");
+            return;
         }
 
-        private static void ShootingStar()
+        ForcePhase(uConsole.GetInt());
+    }
+
+    private static void ShootingStar()
+    {
+        if (shootingStar == null)
         {
-            if (shootingStar == null)
-            {
-                Log("Shooting Stars are disabled");
-                return;
-            }
-
-            int duration = 5;
-            if (uConsole.GetNumParameters() == 1)
-            {
-                duration = uConsole.GetInt();
-            }
-
-            updateShootingStar.Trigger(duration);
+            Log("Shooting Stars are disabled");
+            return;
         }
 
-        private static void ToggleNightSky()
+        int duration = 5;
+        if (uConsole.GetNumParameters() == 1)
         {
-            GameObject originalStarSphere = GameManager.GetUniStorm().m_StarSphere;
-
-            starSphere.SetActive(originalStarSphere.activeSelf);
-            moon.SetActive(originalStarSphere.activeSelf);
-            originalStarSphere.SetActive(!originalStarSphere.activeSelf);
+            duration = uConsole.GetInt();
         }
+
+        updateShootingStar.Trigger(duration);
+    }
+
+    private static void ToggleNightSky()
+    {
+        GameObject originalStarSphere = GameManager.GetUniStorm().m_StarSphere;
+
+        starSphere.SetActive(originalStarSphere.activeSelf);
+        moon.SetActive(originalStarSphere.activeSelf);
+        originalStarSphere.SetActive(!originalStarSphere.activeSelf);
     }
 }

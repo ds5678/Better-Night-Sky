@@ -3,77 +3,76 @@ using Hinterland;
 using UnhollowerBaseLib.Attributes;
 using UnityEngine;
 
-namespace BetterNightSky
-{
+namespace BetterNightSky;
+
 	[MelonLoader.RegisterTypeInIl2Cpp]
 	internal class UpdateMoon : MonoBehaviour
+{
+    public const int MOON_CYCLE_DAYS = 29;
+
+    public Texture2D[] MoonPhaseTextures;
+
+    private Color baseColor;
+    private int forcedPhase = -1;
+    private float lastAlpha = -1;
+    private int lastPhaseTextureIndex = -1;
+    private Material material;
+
+    public UpdateMoon(System.IntPtr intPtr) : base(intPtr) { }
+
+    [HideFromIl2Cpp]
+    public void SetForcedPhase(int forcedPhase)
     {
-        public const int MOON_CYCLE_DAYS = 29;
+        this.forcedPhase = Mathf.Clamp(forcedPhase,0,MoonPhaseTextures.Length);
+        UpdatePhase();
+    }
 
-        public Texture2D[] MoonPhaseTextures;
+    public void Start()
+    {
+        material = GetComponentInChildren<Renderer>().material;
+        baseColor = material.GetColor("_TintColor");
+        UpdatePhase();
+    }
 
-        private Color baseColor;
-        private int forcedPhase = -1;
-        private float lastAlpha = -1;
-        private int lastPhaseTextureIndex = -1;
-        private Material material;
+    public void Update()
+    {
+        UpdateAlpha();
+        UpdateDirection();
+    }
 
-        public UpdateMoon(System.IntPtr intPtr) : base(intPtr) { }
+    public void UpdatePhase()
+    {
+        if (MoonPhaseTextures == null || material == null) return;
 
-        [HideFromIl2Cpp]
-        public void SetForcedPhase(int forcedPhase)
-        {
-            this.forcedPhase = Mathf.Clamp(forcedPhase,0,MoonPhaseTextures.Length);
-            UpdatePhase();
-        }
+        int phaseTextureIndex = GetPhaseTextureIndex();
+        if (lastPhaseTextureIndex == phaseTextureIndex) return;
 
-        public void Start()
-        {
-            material = GetComponentInChildren<Renderer>().material;
-            baseColor = material.GetColor("_TintColor");
-            UpdatePhase();
-        }
+        lastPhaseTextureIndex = phaseTextureIndex;
+        //material.mainTexture = MoonPhaseTextures[lastPhaseTextureIndex];
+        material.mainTexture = Implementation.GetMoonPhaseTexture(lastPhaseTextureIndex);
+    }
 
-        public void Update()
-        {
-            UpdateAlpha();
-            UpdateDirection();
-        }
+    [HideFromIl2Cpp]
+    private int GetPhaseTextureIndex()
+    {
+        if (forcedPhase >= 0) return forcedPhase;
 
-        public void UpdatePhase()
-        {
-            if (MoonPhaseTextures == null || material == null) return;
+        UniStormWeatherSystem uniStormWeatherSystem = GameManager.GetUniStorm();
+        int day = uniStormWeatherSystem.GetDayNumber() + uniStormWeatherSystem.m_MoonCycleStartDay;
+        return day % MOON_CYCLE_DAYS * MoonPhaseTextures.Length / MOON_CYCLE_DAYS;
+    }
 
-            int phaseTextureIndex = GetPhaseTextureIndex();
-            if (lastPhaseTextureIndex == phaseTextureIndex) return;
+    private void UpdateAlpha()
+    {
+        float currentAlpha = GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha;
+        if (Mathf.Approximately(lastAlpha, currentAlpha)) return;
 
-            lastPhaseTextureIndex = phaseTextureIndex;
-            //material.mainTexture = MoonPhaseTextures[lastPhaseTextureIndex];
-            material.mainTexture = Implementation.GetMoonPhaseTexture(lastPhaseTextureIndex);
-        }
+        lastAlpha = currentAlpha;
+        material.SetColor("_TintColor", baseColor * lastAlpha);
+    }
 
-        [HideFromIl2Cpp]
-        private int GetPhaseTextureIndex()
-        {
-            if (forcedPhase >= 0) return forcedPhase;
-
-            UniStormWeatherSystem uniStormWeatherSystem = GameManager.GetUniStorm();
-            int day = uniStormWeatherSystem.GetDayNumber() + uniStormWeatherSystem.m_MoonCycleStartDay;
-            return day % MOON_CYCLE_DAYS * MoonPhaseTextures.Length / MOON_CYCLE_DAYS;
-        }
-
-        private void UpdateAlpha()
-        {
-            float currentAlpha = GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha;
-            if (Mathf.Approximately(lastAlpha, currentAlpha)) return;
-
-            lastAlpha = currentAlpha;
-            material.SetColor("_TintColor", baseColor * lastAlpha);
-        }
-
-        private void UpdateDirection()
-        {
-            transform.forward = -GameManager.GetUniStorm().m_MoonLight.transform.forward;
-        }
+    private void UpdateDirection()
+    {
+        transform.forward = -GameManager.GetUniStorm().m_MoonLight.transform.forward;
     }
 }
