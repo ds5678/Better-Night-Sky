@@ -42,9 +42,6 @@
     <Compile Include="src\UpdateStars.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\.gitignore" />
-    <None Include="..\LICENSE" />
-    <None Include="..\README.md" />
     <EmbeddedResource Include="res\better-night-sky" />
   </ItemGroup>
   <ItemGroup>
