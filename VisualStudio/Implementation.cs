@@ -35,7 +35,7 @@ internal sealed class Implementation : MelonLoader.MelonMod
     private static AssetBundle LoadEmbeddedAssetBundle()
     {
         MemoryStream memoryStream;
-        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BetterNightSky.res.better-night-sky"))
+        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Better-Night-Sky.res.better-night-sky"))
         {
             memoryStream = new MemoryStream((int)stream.Length);
             stream.CopyTo(memoryStream);
