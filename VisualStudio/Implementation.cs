@@ -10,15 +10,13 @@ internal sealed class Implementation : MelonLoader.MelonMod
 {
     private const string NAME = "Better-Night-Sky";
 
-    private static AssetBundle assetBundle;
+    private static AssetBundle assetBundle = LoadEmbeddedAssetBundle();
 
-    private static GameObject? moon;
-    private static UpdateMoon updateMoon;
-
+	private static GameObject? moon;
+    private static UpdateMoon? updateMoon;
     private static GameObject? starSphere;
-
     private static GameObject? shootingStar;
-    private static UpdateShootingStar updateShootingStar;
+    private static UpdateShootingStar? updateShootingStar;
 
     public static int ShootingStarsFrequency
     {
@@ -29,19 +27,12 @@ internal sealed class Implementation : MelonLoader.MelonMod
     {
         Settings.OnLoad();
 
-        Initialize();
-    }
+		uConsole.RegisterCommand("toggle-night-sky", new System.Action(ToggleNightSky));
+		uConsole.RegisterCommand("moon-phase", new System.Action(MoonPhase));
+		uConsole.RegisterCommand("shooting-star", new System.Action(ShootingStar));
+	}
 
-    private static void Initialize()
-    {
-        LoadEmbeddedAssetBundle();
-
-        uConsole.RegisterCommand("toggle-night-sky", new System.Action(ToggleNightSky));
-        uConsole.RegisterCommand("moon-phase", new System.Action(MoonPhase));
-        uConsole.RegisterCommand("shooting-star", new System.Action(ShootingStar));
-    }
-
-    private static void LoadEmbeddedAssetBundle()
+    private static AssetBundle LoadEmbeddedAssetBundle()
     {
         MemoryStream memoryStream;
         using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BetterNightSky.res.better-night-sky"))
@@ -53,7 +44,7 @@ internal sealed class Implementation : MelonLoader.MelonMod
         {
             throw new System.Exception("No data loaded!");
         }
-        assetBundle = AssetBundle.LoadFromMemory(memoryStream.ToArray());
+        return AssetBundle.LoadFromMemory(memoryStream.ToArray());
     }
 
     internal static void ForcePhase(int phase)
@@ -72,6 +63,7 @@ internal sealed class Implementation : MelonLoader.MelonMod
             if (starSphere == null)
             {
                 MelonLoader.MelonLogger.Error("starSphere was instantiated null");
+                return;
             }
 
             starSphere.transform.parent = GameManager.GetUniStorm()?.m_StarSphere?.transform?.parent;
@@ -83,12 +75,12 @@ internal sealed class Implementation : MelonLoader.MelonMod
             if (moon == null)
             {
                 MelonLoader.MelonLogger.Error("moon was instantiated null");
+                return;
             }
 
             moon.transform.parent = GameManager.GetUniStorm()?.m_StarSphere?.transform?.parent?.parent;
             moon.layer = GameManager.GetUniStorm().m_StarSphere.layer;
             updateMoon = moon?.AddComponent<UpdateMoon>();
-            updateMoon.MoonPhaseTextures = GetMoonPhaseTextures();
 
             GameManager.GetUniStorm()?.m_StarSphere?.SetActive(false);
         }
@@ -115,7 +107,7 @@ internal sealed class Implementation : MelonLoader.MelonMod
 
     internal static void RescheduleShootingStars()
     {
-        if (shootingStar != null)
+        if (updateShootingStar != null)
         {
             updateShootingStar.Reschedule();
         }
@@ -136,17 +128,6 @@ internal sealed class Implementation : MelonLoader.MelonMod
         return assetBundle.LoadAsset<Texture2D>("assets/MoonPhase/Moon_" + i + ".png");
     }
 
-    private static Texture2D[] GetMoonPhaseTextures()
-    {
-        Texture2D[] result = new Texture2D[24];
-        for (int i = 0; i < result.Length; i++)
-        {
-            result[i] = GetMoonPhaseTexture(i);
-        }
-
-        return result;
-    }
-
     private static void MoonPhase()
     {
         int numParameter = uConsole.GetNumParameters();
@@ -161,7 +142,7 @@ internal sealed class Implementation : MelonLoader.MelonMod
 
     private static void ShootingStar()
     {
-        if (shootingStar == null)
+        if (updateShootingStar == null)
         {
             uConsole.Log("Shooting Stars are disabled");
             return;

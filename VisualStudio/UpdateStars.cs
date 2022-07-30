@@ -9,14 +9,25 @@ internal sealed class UpdateStars : MonoBehaviour
 {
     private Color baseColor;
     private float lastAlpha = -1;
-    private Material material;
+    private Material? _material;
 
-    public UpdateStars(System.IntPtr intPtr) : base(intPtr) { }
+	private Material Material
+	{
+		get
+		{
+			if (_material == null)
+			{
+				_material = GetComponent<Renderer>().material;
+			}
+			return _material;
+		}
+	}
+
+	public UpdateStars(System.IntPtr intPtr) : base(intPtr) { }
 
     public void Start()
     {
-        material = GetComponent<Renderer>().material;
-        baseColor = material.GetColor("_TintColor");
+        baseColor = Material.GetColor("_TintColor");
     }
 
     public void Update()
@@ -28,6 +39,6 @@ internal sealed class UpdateStars : MonoBehaviour
         }
 
         lastAlpha = currentAlpha;
-        material.SetColor("_TintColor", baseColor * lastAlpha * lastAlpha);
+        Material.SetColor("_TintColor", baseColor * lastAlpha * lastAlpha);
     }
 }

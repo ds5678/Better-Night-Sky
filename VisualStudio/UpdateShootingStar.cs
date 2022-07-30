@@ -23,20 +23,37 @@ internal sealed class UpdateShootingStar : MonoBehaviour
 
     private const int PARTICLES_MAX = 30;
     private const int PARTICLES_MIN = 1;
+    private ParticleSystem? _particleSystem;
 
-    private ParticleSystem particleSystem;
+    private ParticleSystem ParticleSystem 
+    { 
+        get
+        {
+			if (_particleSystem == null)
+            {
+				_particleSystem = GetComponentInChildren<ParticleSystem>();
+				if (_particleSystem == null)
+				{
+					gameObject.SetActive(false);
+					throw new System.NullReferenceException("Particle system not found!");
+				}
+			}
+            return _particleSystem;
+		}
+        set => _particleSystem = value; 
+    }
 
     public UpdateShootingStar(System.IntPtr intPtr) : base(intPtr) { }
 
     [HideFromIl2Cpp]
     internal void Trigger(int duration = 0)
     {
-        this.CancelInvoke();
+        CancelInvoke();
 
         int actualDuration = duration < 1 ? Random.Range(DURATION_MIN, DURATION_MAX) : duration;
-        this.Invoke("StopEmitting", actualDuration);
+        Invoke("StopEmitting", actualDuration);
 
-        this.StartEmitting();
+        StartEmitting();
     }
 
     private static int GetNextDelay()
@@ -64,25 +81,18 @@ internal sealed class UpdateShootingStar : MonoBehaviour
     [HideFromIl2Cpp]
     private bool CanEmit()
     {
-        return !GameManager.GetWeatherComponent().IsIndoorScene() && GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha >= 0.05;
+        return !GameManager.GetWeatherComponent().IsIndoorScene() 
+            && GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha >= 0.05;
     }
 
     private void Start()
     {
-        this.particleSystem = this.GetComponentInChildren<ParticleSystem>();
-        if (this.particleSystem == null)
-        {
-            Implementation.Log("Particle system not found!");
-            this.gameObject.SetActive(false);
-            return;
-        }
-
-        this.StopEmitting();
+        StopEmitting();
     }
 
     private void StartEmitting()
     {
-        if (!this.CanEmit())
+        if (!CanEmit())
         {
             return;
         }
@@ -90,31 +100,26 @@ internal sealed class UpdateShootingStar : MonoBehaviour
         UpdatePosition();
         UpdateColor();
 
-        ParticleSystem.EmissionModule emissionModule = this.particleSystem.emission;
+        ParticleSystem.EmissionModule emissionModule = ParticleSystem.emission;
         emissionModule.enabled = true;
     }
 
     private void StopEmitting()
     {
-        if (this.particleSystem == null)
-        {
-            return;
-        }
-
-        ParticleSystem.EmissionModule emissionModule = this.particleSystem.emission;
+        ParticleSystem.EmissionModule emissionModule = ParticleSystem.emission;
         emissionModule.enabled = false;
     }
 
     internal void Reschedule()
     {
-        this.CancelInvoke();
-        this.StopEmitting();
+        CancelInvoke();
+        StopEmitting();
 
         int delay = GetNextDelay();
-        this.Invoke("StartEmitting", delay);
+        Invoke("StartEmitting", delay);
 
         int duration = GetNextDuration();
-        this.Invoke("Reschedule", delay + duration);
+        Invoke("Reschedule", delay + duration);
 
         Implementation.Log("Scheduled next shooting stars in " + delay + " seconds for " + duration + " seconds.");
     }
@@ -125,7 +130,7 @@ internal sealed class UpdateShootingStar : MonoBehaviour
 
         Color minColor = new Color(Random.Range(COLOR_MIN, COLOR_MAX), Random.Range(COLOR_MIN, COLOR_MAX), Random.Range(COLOR_MIN, COLOR_MAX), currentAlpha);
         Color maxColor = new Color(COLOR_MAX, COLOR_MAX, COLOR_MAX, currentAlpha);
-        ParticleSystem.MainModule mainModule = this.particleSystem.main;
+        ParticleSystem.MainModule mainModule = ParticleSystem.main;
         mainModule.startColor = new ParticleSystem.MinMaxGradient() { m_ColorMin = minColor, m_ColorMax = maxColor };
 
         mainModule.maxParticles = Random.Range(PARTICLES_MIN, PARTICLES_MAX);
@@ -135,12 +140,12 @@ internal sealed class UpdateShootingStar : MonoBehaviour
     {
         if (IsMainMenu())
         {
-            this.particleSystem.transform.position = new Vector3(-2500, 2000, -2000);
-            this.particleSystem.transform.rotation = Quaternion.identity;
+            ParticleSystem.transform.position = new Vector3(-2500, 2000, -2000);
+            ParticleSystem.transform.rotation = Quaternion.identity;
             return;
         }
 
-        this.particleSystem.transform.position = new Vector3(Random.Range(POSITION_MIN, POSITION_MAX), HEIGHT, Random.Range(POSITION_MIN, POSITION_MAX));
-        this.particleSystem.transform.rotation = Quaternion.Euler(0, Random.value * 360, 0);
+        ParticleSystem.transform.position = new Vector3(Random.Range(POSITION_MIN, POSITION_MAX), HEIGHT, Random.Range(POSITION_MIN, POSITION_MAX));
+        ParticleSystem.transform.rotation = Quaternion.Euler(0, Random.value * 360, 0);
     }
 }

@@ -10,7 +10,7 @@ internal sealed class UpdateMoon : MonoBehaviour
 {
     public const int MOON_CYCLE_DAYS = 29;
 
-    public Texture2D[] MoonPhaseTextures;
+    private Texture2D[] MoonPhaseTextures = System.Array.Empty<Texture2D>();
 
     private Color baseColor;
     private int forcedPhase = -1;
@@ -29,6 +29,7 @@ internal sealed class UpdateMoon : MonoBehaviour
 
     public void Start()
     {
+        MoonPhaseTextures = GetMoonPhaseTextures();
         material = GetComponentInChildren<Renderer>().material;
         baseColor = material.GetColor("_TintColor");
         UpdatePhase();
@@ -86,5 +87,16 @@ internal sealed class UpdateMoon : MonoBehaviour
     private void UpdateDirection()
     {
         transform.forward = -GameManager.GetUniStorm().m_MoonLight.transform.forward;
-    }
+	}
+
+	private static Texture2D[] GetMoonPhaseTextures()
+	{
+		Texture2D[] result = new Texture2D[24];
+		for (int i = 0; i < result.Length; i++)
+		{
+			result[i] = Implementation.GetMoonPhaseTexture(i);
+		}
+
+		return result;
+	}
 }
