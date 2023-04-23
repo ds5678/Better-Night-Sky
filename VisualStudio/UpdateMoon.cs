@@ -1,6 +1,5 @@
-﻿extern alias Hinterland;
-using Hinterland;
-using UnhollowerBaseLib.Attributes;
+﻿using Il2Cpp;
+using Il2CppInterop.Runtime.Attributes;
 using UnityEngine;
 
 namespace BetterNightSky;

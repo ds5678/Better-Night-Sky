@@ -1,7 +1,7 @@
-﻿extern alias Hinterland;
-using Hinterland;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
+using Il2Cpp;
+using MelonLoader;
 using UnityEngine;
 
 namespace BetterNightSky;
@@ -23,14 +23,17 @@ internal sealed class Implementation : MelonLoader.MelonMod
         get => Settings.options.ShootingStarsFrequency;
     }
 
-    public override void OnApplicationStart()
+    public override void OnInitializeMelon()
     {
         Settings.OnLoad();
 
-		uConsole.RegisterCommand("toggle-night-sky", new System.Action(ToggleNightSky));
-		uConsole.RegisterCommand("moon-phase", new System.Action(MoonPhase));
-		uConsole.RegisterCommand("shooting-star", new System.Action(ShootingStar));
-	}
+        uConsole.RegisterCommand("toggle-night-sky", new System.Action(ToggleNightSky));
+        uConsole.RegisterCommand("moon-phase", new System.Action(MoonPhase));
+        uConsole.RegisterCommand("shooting-star", new System.Action(ShootingStar));
+
+        Debug.Log($"[{Info.Name}] version {Info.Version} loaded");
+        new MelonLoader.MelonLogger.Instance($"{Info.Name}").Msg($"Version {Info.Version} loaded");
+    }
 
     private static AssetBundle LoadEmbeddedAssetBundle()
     {
@@ -59,7 +62,7 @@ internal sealed class Implementation : MelonLoader.MelonMod
     {
         if (Settings.options.Sky && starSphere == null)
         {
-            starSphere = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/StarSphere.prefab"));
+            starSphere = UnityEngine.Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/StarSphere.prefab"));
             if (starSphere == null)
             {
                 MelonLoader.MelonLogger.Error("starSphere was instantiated null");
@@ -71,7 +74,7 @@ internal sealed class Implementation : MelonLoader.MelonMod
             starSphere.layer = GameManager.GetUniStorm().m_StarSphere.layer;
             starSphere?.AddComponent<UpdateStars>();
 
-            moon = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/Moon.prefab"));
+            moon = UnityEngine.Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/Moon.prefab"));
             if (moon == null)
             {
                 MelonLoader.MelonLogger.Error("moon was instantiated null");
@@ -87,21 +90,21 @@ internal sealed class Implementation : MelonLoader.MelonMod
 
         if (!Settings.options.Sky && starSphere != null)
         {
-            Object.Destroy(starSphere);
-            Object.Destroy(moon);
+            UnityEngine.Object.Destroy(starSphere);
+            UnityEngine.Object.Destroy(moon);
             GameManager.GetUniStorm().m_StarSphere.SetActive(true);
         }
 
         if (Settings.options.ShootingStarsFrequency > 0 && shootingStar == null)
         {
-            shootingStar = Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/ShootingStar.prefab"));
+            shootingStar = UnityEngine.Object.Instantiate(assetBundle.LoadAsset<GameObject>("assets/ShootingStar.prefab"));
             shootingStar.transform.parent = GameManager.GetUniStorm().m_StarSphere.transform.parent.parent;
             updateShootingStar = shootingStar.AddComponent<UpdateShootingStar>();
         }
 
         if (Settings.options.ShootingStarsFrequency == 0 && shootingStar != null)
         {
-            Object.Destroy(shootingStar);
+            UnityEngine.Object.Destroy(shootingStar);
         }
     }
 
