@@ -125,13 +125,16 @@ internal sealed class UpdateShootingStar : MonoBehaviour
 
     private void UpdateColor()
     {
-        float currentAlpha = Mathf.Clamp(GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha, 0, ALPHA_MAX);
+        float currentAlpha = Mathf.Clamp(GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha, 0, ALPHA_MAX);        
 
         Color minColor = new Color(UnityEngine.Random.Range(COLOR_MIN, COLOR_MAX), UnityEngine.Random.Range(COLOR_MIN, COLOR_MAX), UnityEngine.Random.Range(COLOR_MIN, COLOR_MAX), currentAlpha);
         Color maxColor = new Color(COLOR_MAX, COLOR_MAX, COLOR_MAX, currentAlpha);
+        
+        var gradient = new ParticleSystem.MinMaxGradient() { m_ColorMin = minColor, m_ColorMax = maxColor };        
         ParticleSystem.MainModule mainModule = ParticleSystem.main;
-        mainModule.startColor = new ParticleSystem.MinMaxGradient() { m_ColorMin = minColor, m_ColorMax = maxColor };
 
+        // Commented as setting color currently causing a crash to desktop under some conditions
+        //mainModule.startColor = gradient;
         mainModule.maxParticles = UnityEngine.Random.Range(PARTICLES_MIN, PARTICLES_MAX);
     }
 
