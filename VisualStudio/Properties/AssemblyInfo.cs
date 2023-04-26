@@ -32,7 +32,14 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("4.1.0")]
-[assembly: AssemblyFileVersion("4.1.0")]
-[assembly: MelonInfo(typeof(BetterNightSky.Implementation), "Better-Night-Sky", "4.1.0", "Wulf Marius, ds5678")]
+[assembly: AssemblyVersion("5.0.0")]
+[assembly: AssemblyFileVersion("5.0.0")]
+[assembly: MelonInfo(typeof(BetterNightSky.Implementation), BuildInfo.ModName, BuildInfo.ModVersion, BuildInfo.ModAuthor)]
 [assembly: MelonGame("Hinterland", "TheLongDark")]
+
+internal static class BuildInfo
+{
+    internal const string ModName = "Better-Night-Sky";
+    internal const string ModAuthor = "Wulf Marius, ds5678";
+    internal const string ModVersion = "5.0.0";
+}

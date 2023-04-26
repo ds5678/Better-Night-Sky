@@ -1,6 +1,5 @@
-﻿extern alias Hinterland;
-using Hinterland;
-using UnhollowerBaseLib.Attributes;
+﻿using Il2Cpp;
+using Il2CppInterop.Runtime.Attributes;
 using UnityEngine;
 
 namespace BetterNightSky;
@@ -50,7 +49,7 @@ internal sealed class UpdateShootingStar : MonoBehaviour
     {
         CancelInvoke();
 
-        int actualDuration = duration < 1 ? Random.Range(DURATION_MIN, DURATION_MAX) : duration;
+        int actualDuration = duration < 1 ? UnityEngine.Random.Range(DURATION_MIN, DURATION_MAX) : duration;
         Invoke("StopEmitting", actualDuration);
 
         StartEmitting();
@@ -58,7 +57,7 @@ internal sealed class UpdateShootingStar : MonoBehaviour
 
     private static int GetNextDelay()
     {
-        int result = Random.Range(DELAY_MIN, DELAY_MAX) / Implementation.ShootingStarsFrequency;
+        int result = UnityEngine.Random.Range(DELAY_MIN, DELAY_MAX) / Implementation.ShootingStarsFrequency;
 
         if (IsMainMenu())
         {
@@ -70,7 +69,7 @@ internal sealed class UpdateShootingStar : MonoBehaviour
 
     private static int GetNextDuration()
     {
-        return Random.Range(DURATION_MIN, DURATION_MAX);
+        return UnityEngine.Random.Range(DURATION_MIN, DURATION_MAX);
     }
 
     internal static bool IsMainMenu()
@@ -126,14 +125,17 @@ internal sealed class UpdateShootingStar : MonoBehaviour
 
     private void UpdateColor()
     {
-        float currentAlpha = Mathf.Clamp(GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha, 0, ALPHA_MAX);
+        float currentAlpha = Mathf.Clamp(GameManager.GetUniStorm().GetActiveTODState().m_MoonAlpha, 0, ALPHA_MAX);        
 
-        Color minColor = new Color(Random.Range(COLOR_MIN, COLOR_MAX), Random.Range(COLOR_MIN, COLOR_MAX), Random.Range(COLOR_MIN, COLOR_MAX), currentAlpha);
+        Color minColor = new Color(UnityEngine.Random.Range(COLOR_MIN, COLOR_MAX), UnityEngine.Random.Range(COLOR_MIN, COLOR_MAX), UnityEngine.Random.Range(COLOR_MIN, COLOR_MAX), currentAlpha);
         Color maxColor = new Color(COLOR_MAX, COLOR_MAX, COLOR_MAX, currentAlpha);
+        
+        var gradient = new ParticleSystem.MinMaxGradient() { m_ColorMin = minColor, m_ColorMax = maxColor };        
         ParticleSystem.MainModule mainModule = ParticleSystem.main;
-        mainModule.startColor = new ParticleSystem.MinMaxGradient() { m_ColorMin = minColor, m_ColorMax = maxColor };
 
-        mainModule.maxParticles = Random.Range(PARTICLES_MIN, PARTICLES_MAX);
+        // Commented as setting color currently causing a crash to desktop under some conditions
+        //mainModule.startColor = gradient;
+        mainModule.maxParticles = UnityEngine.Random.Range(PARTICLES_MIN, PARTICLES_MAX);
     }
 
     private void UpdatePosition()
@@ -145,7 +147,7 @@ internal sealed class UpdateShootingStar : MonoBehaviour
             return;
         }
 
-        ParticleSystem.transform.position = new Vector3(Random.Range(POSITION_MIN, POSITION_MAX), HEIGHT, Random.Range(POSITION_MIN, POSITION_MAX));
-        ParticleSystem.transform.rotation = Quaternion.Euler(0, Random.value * 360, 0);
+        ParticleSystem.transform.position = new Vector3(UnityEngine.Random.Range(POSITION_MIN, POSITION_MAX), HEIGHT, UnityEngine.Random.Range(POSITION_MIN, POSITION_MAX));
+        ParticleSystem.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.value * 360, 0);
     }
 }

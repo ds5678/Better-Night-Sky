@@ -1,13 +1,13 @@
-﻿extern alias Hinterland;
+﻿using Il2Cpp;
+using UnityEngine;
 using HarmonyLib;
-using Hinterland;
 
 namespace BetterNightSky;
 
-[HarmonyPatch(typeof(TODStateConfig), nameof(TODStateConfig.SetBlended))]
+[HarmonyPatch(typeof(TODStateData), nameof(TODStateData.SetBlended))]
 internal static class TODStateConfic_SetBlended
 {
-    public static void Postfix(TODStateConfig __instance, int nightStates)
+    public static void Postfix(TODStateData __instance, int nightStates)
     {
         if (nightStates > 0)
         {

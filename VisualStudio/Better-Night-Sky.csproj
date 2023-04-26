@@ -1,81 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<!--This is an xml comment. Comments have no impact on compiling.-->
+
 	<PropertyGroup>
-		<TargetFramework>net472</TargetFramework>
+		<!--This is the .NET version the mod will be compiled with. Don't change it.-->
+		<TargetFramework>net6.0</TargetFramework>
+
+		<!--This tells the compiler to use the latest C# version.-->
 		<LangVersion>Latest</LangVersion>
+
+		<!--This adds global usings for a few common System namespaces.-->
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<!--This enables nullable annotation and analysis. It's good coding form.-->
 		<Nullable>enable</Nullable>
+
+		<!--This tells the compiler to use assembly attributes instead of generating its own.-->
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+		<!--PDB files give line numbers in stack traces (errors). This is useful for debugging. There are 3 options:-->
+		<!--full has a pdb file created beside the dll.-->
+		<!--embedded has the pdb data embedded within the dll. This is useful because bug reports will then have line numbers.-->
+		<!--none skips creation of pdb data.-->
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
-	<PropertyGroup>
-		<TheLongDarkPath>E:\Games\TLD400</TheLongDarkPath>
-		<MelonLoaderPath>$(TheLongDarkPath)\MelonLoader</MelonLoaderPath>
-		<ManagedPath>$(MelonLoaderPath)\Managed</ManagedPath>
-		<ModsPath>$(TheLongDarkPath)\Mods</ModsPath>
-	</PropertyGroup>
-
+	<!--This is the of packages that the mod references.-->
 	<ItemGroup>
-		<Reference Include="0Harmony">
-			<HintPath>$(MelonLoaderPath)\0Harmony.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Assembly-CSharp">
-			<HintPath>$(ManagedPath)\Assembly-CSharp.dll</HintPath>
-			<Private>False</Private>
-			<Aliases>Hinterland</Aliases>
-		</Reference>
-		<Reference Include="Il2Cppmscorlib">
-			<HintPath>$(ManagedPath)\Il2Cppmscorlib.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Il2CppSystem">
-			<HintPath>$(ManagedPath)\Il2CppSystem.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="MelonLoader">
-			<HintPath>$(MelonLoaderPath)\MelonLoader.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="ModSettings">
-			<HintPath>$(ModsPath)\ModSettings.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnhollowerBaseLib">
-			<HintPath>$(ManagedPath)\UnhollowerBaseLib.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.AssetBundleModule">
-			<HintPath>$(ManagedPath)\UnityEngine.AssetBundleModule.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.CoreModule">
-			<HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.ParticleSystemModule">
-			<HintPath>$(ManagedPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.PhysicsModule">
-			<HintPath>$(ManagedPath)\UnityEngine.PhysicsModule.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Nullable" Version="1.3.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+		<!--This package contains almost everything a person could possibly need to reference while modding.-->
+		<PackageReference Include="STBlade.Modding.TLD.Il2CppAssemblies.Windows" Version="2.10.0" />
+		<PackageReference Include="STBlade.Modding.TLD.ModSettings" Version="1.9.0" />
+		<!--The package version here in this template may be outdated and need to be updated. Visual Studio can update package versions automatically.-->
+		<!--If the mod references any other mods (such as ModSettings), that NuGet package will also need to be listed here.-->
 	</ItemGroup>
 
 	<ItemGroup>
 		<EmbeddedResource Include="res\better-night-sky" />
 	</ItemGroup>
-
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-		<DebugType>full</DebugType>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-		<DebugType>pdbonly</DebugType>
-	</PropertyGroup>
 </Project>
